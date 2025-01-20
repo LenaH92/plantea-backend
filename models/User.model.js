@@ -1,56 +1,61 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require("mongoose");
 
 // TODO: Please make sure you edit the Book model to whatever makes sense in this case
 const userSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: [true, "Name is required."]
+      required: [true, "Name is required."],
     },
     surname: {
       type: String,
-      required: [true, "Surname is required."]
+      required: [true, "Surname is required."],
     },
     email: {
       type: String,
       required: [true, "Email is required."],
-      unique: true
+      unique: true,
     },
     username: {
       type: String,
       required: [true, "Username is required."],
-      unique: true
+      unique: true,
     },
     profilePicture: {
       type: String,
       required: true,
-      default: "https://cdn-icons-png.flaticon.com/512/8801/8801434.png"
+      default: "https://cdn-icons-png.flaticon.com/512/8801/8801434.png",
     },
     passwordHash: {
       type: String,
-      required: [true, "Pasword is required."]
+      required: [true, "Pasword is required."],
     },
-    blogPosts: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Blog' //=>  will likely make an array w/ all the blog id (I THINK)
-    }],
-    comments: [{
-      type: Types.ObjectId,
-      ref: 'Comment'
-    }],
+    blogPosts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Blog", //=>  will likely make an array w/ all the blog id (I THINK)
+      },
+    ],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
     greenhouse: {
-      type: [String], //will work  on it later in life 
+      type: [String], //will work  on it later in life
       default: [],
     },
     bioDescription: {
-      type: String
-    }
-  }, {
-  // this second object adds extra properties: `createdAt` and `updatedAt`
-  timestamps: true,
-}
-)
+      type: String,
+    },
+  },
+  {
+    // this second object adds extra properties: `createdAt` and `updatedAt`
+    timestamps: true,
+  }
+);
 
-const User = model('User', userSchema)
+const User = model("User", userSchema);
 
-module.exports = User
+module.exports = User;
