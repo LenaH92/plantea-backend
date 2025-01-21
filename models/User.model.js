@@ -6,20 +6,28 @@ const userSchema = new Schema(
     firstName: {
       type: String,
       required: [true, "Name is required."],
+      trim: true,
+      lowercase: true
     },
     surname: {
       type: String,
       required: [true, "Surname is required."],
+      trim: true,
+      lowercase: true
     },
     email: {
       type: String,
       required: [true, "Email is required."],
       unique: true,
+      trim: true,
+      lowercase: true
     },
     username: {
       type: String,
       required: [true, "Username is required."],
       unique: true,
+      trim: true,
+      lowercase: true
     },
     profilePicture: {
       type: String,
@@ -30,18 +38,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Pasword is required."],
     },
-    blogPosts: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Blog", //=>  will likely make an array w/ all the blog id (I THINK)
-      },
-    ],
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
     greenhouse: {
       type: [String], //will work  on it later in life
       default: [],

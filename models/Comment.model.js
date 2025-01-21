@@ -1,15 +1,15 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require("mongoose");
 
 const commentSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     blogPostId: {
       type: Schema.Types.ObjectId,
-      ref: 'Blog',
+      ref: "Blog",
       required: true,
     },
     pinned: {
@@ -19,9 +19,10 @@ const commentSchema = new Schema(
     content: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
-    createdAt: { // added this for seeing the timestamps
+    createdAt: {
+      // added this for seeing the timestamps
       type: Date,
       default: Date.now,
     },
@@ -30,8 +31,8 @@ const commentSchema = new Schema(
     // this second object adds extra properties: `createdAt` and `updatedAt`
     timestamps: true,
   }
-)
+);
 
-const Comment = model('Comment', commentSchema)
+const Comment = model("Comment", commentSchema);
 
-module.exports = Comment
+module.exports = Comment;
