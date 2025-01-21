@@ -6,20 +6,28 @@ const userSchema = new Schema(
     firstName: {
       type: String,
       required: [true, "Name is required."],
+      trim: true,
+      lowercase: true
     },
     surname: {
       type: String,
       required: [true, "Surname is required."],
+      trim: true,
+      lowercase: true
     },
     email: {
       type: String,
       required: [true, "Email is required."],
       unique: true,
+      trim: true,
+      lowercase: true
     },
     username: {
       type: String,
       required: [true, "Username is required."],
       unique: true,
+      trim: true,
+      lowercase: true
     },
     profilePicture: {
       type: String,
