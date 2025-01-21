@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Plant = require("../models/Plant.model");
 const fs = require("fs");
 
@@ -9,7 +8,7 @@ const importPlantData = async () => {
       
       // Insert data into MongoDB
       await Plant.insertMany(plants);
-      console.log('Data imported successfully!');
+      console.log('PlantSpecies Data imported successfully!');
     } catch (error) {
       console.error('Error importing data:', error);
     }
