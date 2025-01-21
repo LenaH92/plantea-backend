@@ -1,40 +1,32 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
-const { isAuthenticated } = require("../middlewares//route-guard.middleware");
-
-const router = express.Router();
+const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
 // POST Signup
 router.post("/signup", async (req, res, next) => {
-  const { firstName, surname, email, username, password } = req.body;
-
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email and password are required." });
+  const credentials = req.body; // { username: '...', password: '...'}
+  if (!credentials.username || !credentials.password) {
+    res.status(400).json({ message: "Provide username and password" });
+    return;
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ username: credentials.username });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already in use." });
+      res.status(400).json({ message: "The username is already taken" });
+      return;
     }
-
+    const existingEmail = await User.findOne({ email: credentials.email });
+    if (existingEmail) {
+      res.status(400).json({ message: "The email is already taken" });
+      return;
+    }
     const salt = bcrypt.genSaltSync(13);
-    const passwordHash = bcrypt.hashSync(password, salt);
-
-    const newUser = await User.create({
-      firstName,
-      surname,
-      email,
-      username,
-      passwordHash,
-    });
-
-    const { passwordHash: _, ...userData } = newUser.toObject();
-    res.status(201).json(userData);
+    const passwordHash = bcrypt.hashSync(credentials.password, salt);
+    const newUser = await User.create({ ...credentials, passwordHash });
+    res.status(201).json(newUser);
   } catch (error) {
     next(error);
   }
@@ -42,46 +34,43 @@ router.post("/signup", async (req, res, next) => {
 
 // POST Login
 router.post("/login", async (req, res, next) => {
-  const { email, password } = req.body;
+  const credentials = req.body; // { username: '...', password: '...'}
 
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email and password are required." });
-  }
-
+  // Check for user with given username
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json();
-    }
-
-    const passwordValid = bcrypt.compareSync(password, user.passwordHash);
-    if (!passwordValid) {
-      return res.status(403).json({ message: "Invalid credentials." });
-    }
-
-    const payload = { userId: user._id };
-    const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
-      algorithm: "HS256",
-      expiresIn: "6h",
+    const potentialUser = await User.findOne({
+      username: credentials.username,
     });
-
-    res.json({ token: authToken });
+    if (potentialUser) {
+      // Check the password
+      if (
+        bcrypt.compareSync(credentials.password, potentialUser.passwordHash)
+      ) {
+        // The user has the right credentials
+        const payload = { userId: potentialUser._id };
+        const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+          algorithm: "HS256",
+          expiresIn: "6h",
+        });
+        res.json({ token: authToken });
+      } else {
+        res.status(403).json({ message: "Incorrect password" });
+      }
+    } else {
+      res.status(400).json({ message: "No user with this username" });
+    }
   } catch (error) {
     next(error);
   }
 });
-
 // GET Verify
 router.get("/verify", isAuthenticated, async (req, res, next) => {
+  console.log("Log from handler");
   try {
     const currentUser = await User.findById(req.tokenPayload.userId).select(
       "-passwordHash"
     );
-    if (!currentUser) {
-      return res.status(404).json();
-    }
+    // create a copy of currentUser using currentUser._doc, then delete copy.passwordHash
     res.json(currentUser);
   } catch (error) {
     next(error);
