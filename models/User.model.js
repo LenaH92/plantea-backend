@@ -38,18 +38,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Pasword is required."],
     },
-    blogPosts: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Blog", //=>  will likely make an array w/ all the blog id (I THINK)
-      },
-    ],
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
     greenhouse: {
       type: [String], //will work  on it later in life
       default: [],
