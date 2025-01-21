@@ -1,47 +1,28 @@
-const mongoose = require("mongoose");
-const router = require("express").Router();
+const { isValidObjectId } = require("mongoose");
 const Blog = require("../models/Blog.model");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
-// const Blogs = require("../blog.json???"); //add the file
+const router = require("express").Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
-    const Blogs = await Blog.find().populate("userId", "firstName surname");
-    res.status(200).json(Blogs);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
-
-router.get("/:BlogPostId", async (req, res, next) => {
-  const { BlogPostId } = req.params;
-  if (mongoose.Types.ObjectId.isValid(BlogPostId)) {
-  }
-  try {
-    const Blog = await Blog.findById(BlogPostId).populate(
-      "userId",
-      "firstName surname"
-    );
-    res.status(400).json(Blog);
+    const blogs = await Blog.find().populate("userId", "username");
+    res.status(200).json(blogs);
   } catch (error) {
     next(error);
   }
 });
 
 router.post("/", isAuthenticated, async (req, res, next) => {
-  const { title, textContent, tags, categories, mediaContent } = req.body;
+  const { title, textContent, tags, categories } = req.body;
   const userId = req.tokenPayload.userId;
-
   try {
     const newBlog = await Blog.create({
       title,
-      userId,
       textContent,
       tags,
       categories,
-      mediaContent,
+      userId,
     });
     res.status(201).json(newBlog);
   } catch (error) {
@@ -49,44 +30,28 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// PUT a blog by ID (Protected)
-router.put("/:BlogPostId", isAuthenticated, async (req, res, next) => {
-  const { BlogPostId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(BlogPostId)) {
-    return res.status(400).json({ message: "Invalid Blog ID." });
-  }
-
-  try {
-    const updatedBlog = await Blog.findByIdAndUpdate(BlogPostId, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!updatedBlog) {
-      return res.status(404).json({ message: "Blog not found." });
+router.delete("/:blogId", isAuthenticated, async (req, res, next) => {
+  const { blogId } = req.params;
+  if (isValidObjectId(blogId)) {
+    try {
+      const blogToDelete = await Blog.findById(blogId);
+      if (blogToDelete) {
+        if (blogToDelete.userId.toString() === req.tokenPayload.userId) {
+          await Blog.findByIdAndDelete(blogId);
+          res.status(204).send();
+        } else {
+          res
+            .status(403)
+            .json({ message: "You cannot delete a blog you didn't create" });
+        }
+      } else {
+        res.status(404).json({ message: "Blog not found" });
+      }
+    } catch (error) {
+      next(error);
     }
-    res.status(200).json(updatedBlog);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// DELETE a blog by ID (Protected)
-router.delete("/:BlogPostId", isAuthenticated, async (req, res, next) => {
-  const { BlogPostId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(BlogPostId)) {
-    return res.status(400).json({ message: "Invalid Blog ID." });
-  }
-
-  try {
-    const deletedBlog = await Blog.findByIdAndDelete(BlogPostId);
-    if (!deletedBlog) {
-      return res.status(404).json({ message: "Blog not found." });
-    }
-    res.status(204).json();
-  } catch (error) {
-    next(error);
+  } else {
+    res.status(400).json({ message: "Invalid blog ID" });
   }
 });
 
