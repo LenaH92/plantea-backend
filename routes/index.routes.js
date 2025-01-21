@@ -1,9 +1,7 @@
 const router = require("express").Router();
-// router.get('/', (req, res) => {
-//   res.json('All good in here')
-// })
-const authRoutes = require("./auth.routes");
-router.use("/auth", authRoutes);
+router.get('/', (req, res) => {
+    res.json('All good in here')
+})
 
 const blogsRoutes = require("./blogs.routes");
 router.use("/blogs", blogsRoutes);

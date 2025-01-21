@@ -5,6 +5,11 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middlewares//route-guard.middleware");
 
 const router = express.Router();
+/* Sorry  I  put  this here  so we can checkit is accesible */
+router.get('/', (req, res) => {
+  res.json('All good in auth  :)')
+})
+
 
 // POST Signup
 router.post("/signup", async (req, res, next) => {
