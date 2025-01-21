@@ -4,11 +4,12 @@ const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
 const router = require("express").Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/", isAuthenticated, async (req, res, next) => {
   try {
-    const blogs = await Blog.find().populate("userId", "username");
+    const blogs = await Blog.find().populate("userId", "username"); //check if populate without passing hash
     res.status(200).json(blogs);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });

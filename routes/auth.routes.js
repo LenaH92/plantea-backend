@@ -7,11 +7,24 @@ const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 // POST Signup
 router.post("/signup", async (req, res, next) => {
   const credentials = req.body; // { username: '...', password: '...'}
-
-  const salt = bcrypt.genSaltSync(13);
-  const passwordHash = bcrypt.hashSync(credentials.password, salt);
+  if (!credentials.username || !credentials.password) {
+    res.status(400).json({ message: "Provide username and password" });
+    return;
+  }
 
   try {
+    const existingUser = await User.findOne({ username: credentials.username });
+    if (existingUser) {
+      res.status(400).json({ message: "The username is already taken" });
+      return;
+    }
+    const existingEmail = await User.findOne({ email: credentials.email });
+    if (existingEmail) {
+      res.status(400).json({ message: "The email is already taken" });
+      return;
+    }
+    const salt = bcrypt.genSaltSync(13);
+    const passwordHash = bcrypt.hashSync(credentials.password, salt);
     const newUser = await User.create({ ...credentials, passwordHash });
     res.status(201).json(newUser);
   } catch (error) {
@@ -54,7 +67,10 @@ router.post("/login", async (req, res, next) => {
 router.get("/verify", isAuthenticated, async (req, res, next) => {
   console.log("Log from handler");
   try {
-    const currentUser = await User.findById(req.tokenPayload.userId);
+    const currentUser = await User.findById(req.tokenPayload.userId).select(
+      "-passwordHash"
+    );
+    // create a copy of currentUser using currentUser._doc, then delete copy.passwordHash
     res.json(currentUser);
   } catch (error) {
     next(error);
