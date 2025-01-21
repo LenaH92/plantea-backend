@@ -1,5 +1,6 @@
-/*const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const Plant = require("../models/Plant.model");
+const fs = require("fs");
 
 const importPlantData = async () => {
     try {
@@ -11,9 +12,9 @@ const importPlantData = async () => {
       console.log('Data imported successfully!');
     } catch (error) {
       console.error('Error importing data:', error);
-    } finally {
-      mongoose.connection.close();
     }
   };
 
-module.exports = importPlantData;*/
+module.exports = importPlantData;
+
+
