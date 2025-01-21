@@ -23,7 +23,7 @@ const userSchema = new Schema(
     },
     profilePicture: {
       type: String,
-      required: true,
+    //  required: true,
       default: "https://cdn-icons-png.flaticon.com/512/8801/8801434.png",
     },
     passwordHash: {

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 const Plant = require("../models/Plant.model");
 
 const importPlantData = async () => {
@@ -16,4 +16,4 @@ const importPlantData = async () => {
     }
   };
 
-module.exports = importPlantData;
+module.exports = importPlantData;*/
