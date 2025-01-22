@@ -24,6 +24,10 @@ const blogSchema = new Schema(
       type: Number,
       default: 0,
     },
+    type: {
+      type: String,
+      enum: ["blogPost", "question"]
+    },
     textContent: {
       type: String,
       required: [true, "Content is required."],
