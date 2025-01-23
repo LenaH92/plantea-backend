@@ -7,7 +7,11 @@ const Blog = require("../models/Blog.model");
 const router = express.Router();
 // ADD route for pinned comments!
 
-router.get("/blog/:blogPostId", async (req, res, next) => {
+
+//I'm leaving thih here but if in the future we need to use it, we better move it to blog routes :)
+
+
+/* router.get("/blog/:blogPostId", async (req, res, next) => {
   const { blogPostId } = req.params;
   if (isValidObjectId(blogPostId)) {
     try {
@@ -22,7 +26,7 @@ router.get("/blog/:blogPostId", async (req, res, next) => {
   } else {
     res.status(400).json({ message: "Invalid blog ID" });
   }
-});
+}); */
 
 /* GEt route to edit your  comment */
 
