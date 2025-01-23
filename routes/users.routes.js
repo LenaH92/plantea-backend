@@ -11,9 +11,10 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+}); //we need to get just one user for the profile page
 
 router.get("/:userId", async (req, res, next) => {
+  //AUTH ROUTE = TAKE ID FROM TOKEN NOT PARAMS = NOT SEND ID WITH LINK
   const { userId } = req.params;
   if (isValidObjectId(userId)) {
     try {

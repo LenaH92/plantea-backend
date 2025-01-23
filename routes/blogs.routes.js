@@ -19,7 +19,7 @@ router.get("/:blogId", async (req, res, next) => {
   const { blogId } = req.params;
   if (isValidObjectId(blogId)) {
     try {
-      const blog = await Blog.findById(blogId).populate("blogId", "title");
+      const blog = await Blog.findById(blogId).populate("userId", "username");
       if (blog) {
         res.status(200).json(blog);
       } else {
