@@ -52,10 +52,7 @@ router.post("/login", async (req, res, next) => {
         bcrypt.compareSync(credentials.password, potentialUser.passwordHash)
       ) {
         // The user has the right credentials
-        const payload = {
-          userId: potentialUser._id,
-          username: potentialUser.username,
-        };
+        const payload = { userId: potentialUser._id };
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
           algorithm: "HS256",
           expiresIn: "6h",
