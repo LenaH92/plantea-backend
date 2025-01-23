@@ -4,7 +4,7 @@ const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
 const router = require("express").Router();
 
-router.get("/", isAuthenticated, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const blogs = await Blog.find().populate("userId", "username"); //check if populate without passing hash
     res.status(200).json(blogs);
@@ -13,6 +13,12 @@ router.get("/", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+
+/* Get route to ONE blog */
+
+
+/* PUT route to edit one blog */
+
 
 router.post("/", isAuthenticated, async (req, res, next) => {
   const { title, textContent, tags, categories } = req.body;

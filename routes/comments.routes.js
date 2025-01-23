@@ -23,6 +23,8 @@ router.get("/blog/:blogPostId", async (req, res, next) => {
   }
 });
 
+/* GEt route to edit your  comment */
+
 // Add a comment
 router.post("/", isAuthenticated, async (req, res, next) => {
   const { blogPostId, content } = req.body;
