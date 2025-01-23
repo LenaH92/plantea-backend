@@ -39,10 +39,6 @@ const blogSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    blogId: {
-      type: Schema.Types.ObjectId,
-      ref: "Blog",
-    },
     comments: [
       {
         type: Schema.Types.ObjectId,

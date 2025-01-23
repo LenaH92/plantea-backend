@@ -5,11 +5,9 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
-
-router.get('/', (req, res) => {
-  res.json('All good in auth  :)')
-})
-
+router.get("/", (req, res) => {
+  res.json("All good in auth  :)");
+});
 
 // POST Signup
 router.post("/signup", async (req, res, next) => {
@@ -54,7 +52,10 @@ router.post("/login", async (req, res, next) => {
         bcrypt.compareSync(credentials.password, potentialUser.passwordHash)
       ) {
         // The user has the right credentials
-        const payload = { userId: potentialUser._id };
+        const payload = {
+          userId: potentialUser._id,
+          username: potentialUser.username,
+        };
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
           algorithm: "HS256",
           expiresIn: "6h",
