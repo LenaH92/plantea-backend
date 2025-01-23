@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Comment = require("../models/Comment.model");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
+const Blog = require("../models/Blog.model");
 
 const router = express.Router();
 // ADD route for pinned comments!
@@ -37,9 +38,41 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
+/* route to edit your own comment */
+
+router.put("/:commentId", isAuthenticated, async (req, res, next) => {
+  const { commentId } = req.params;
+  if (mongoose.isValidObjectId(commentId)) {
+    try {
+      const commentToEdit = await Comment.findById(commentId);
+      if (commentToEdit) {
+        if (commentToEdit.userId.toString() === req.tokenPayload.userId) {
+          const updatedComment = await Comment.findByIdAndUpdate(commentId, req.body, {
+            new: true,
+            runValidators: true,
+          });
+          res.json(updatedComment)
+        } else {
+          res.status(403).json({ message: "you cannot edit a comment you didn't make" })
+        }
+      } else {
+        res.status(404).json({ message: "Comment not found" })
+      }
+    } catch (error) {
+      console.log(error);
+      next(error)
+    }
+  } else {
+    res.status(400).json({ message: "Invalid comment ID" });
+  }
+})
+
+
+
+/* Delete a comment */
 router.delete("/:commentId", isAuthenticated, async (req, res, next) => {
   const { commentId } = req.params;
-  if (isValidObjectId(commentId)) {
+  if (mongoose.isValidObjectId(commentId)) {
     try {
       const commentToDelete = await Comment.findById(commentId);
       if (commentToDelete) {
