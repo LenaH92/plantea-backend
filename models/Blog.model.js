@@ -26,7 +26,7 @@ const blogSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["blogPost", "question"]
+      enum: ["blogPost", "question"],
     },
     textContent: {
       type: String,
@@ -38,6 +38,10 @@ const blogSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+    },
+    blogId: {
+      type: Schema.Types.ObjectId,
+      ref: "Blog",
     },
     comments: [
       {

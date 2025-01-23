@@ -15,12 +15,48 @@ router.get("/", async (req, res, next) => {
 });
 
 /* Get route to ONE blog */
-
+router.get("/:blogId", async (req, res, next) => {
+  const { blogId } = req.params;
+  if (isValidObjectId(blogId)) {
+    try {
+      const blog = await Blog.findById(blogId).populate("blogId", "title");
+      if (blog) {
+        res.status(200).json(blog);
+      } else {
+        res.status(404).json({ message: "Blog not found" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    res.status(400).json({ message: "Invalid blog ID" });
+  }
+});
 
 /* PUT route to edit one blog */
+router.put("/:blogId", isAuthenticated, async (req, res, next) => {
+  const { blogId } = req.params;
+  const { title, textContent, tags, categories } = req.body;
+  if (isValidObjectId(blogId)) {
+    try {
+      const blogToUpdate = await Blog.findById(blogId);
+      if (blogToUpdate) {
+        if (blogToUpdate.userId.toString() === req.tokenPayload.userId) {
+          const updatedBlog = await Blog.findByIdAndUpdate(
+            blogId,
+            { title, textContent, tags, categories },
+            { new: true }
+          );
+          res.status(200).json(updatedBlog);
+        }
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+});
 
-
-router.post("/", isAuthenticated, async (req, res, next) => {
+router.post("/new", isAuthenticated, async (req, res, next) => {
   const { title, textContent, tags, categories } = req.body;
   const userId = req.tokenPayload.userId;
   try {
