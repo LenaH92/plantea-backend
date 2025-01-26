@@ -45,9 +45,12 @@ const blogSchema = new Schema(
         ref: "Comment",
       },
     ],
-    selectedSpecies: {
-      type: String
-    }
+    selectedSpecies: [
+      {
+        plantId: { type: Schema.Types.ObjectId, ref: "Plant"},
+        name: { type: String},
+      },
+    ],
   },
   {
     timestamps: true, //useful to add when created and when updatedAt the post
