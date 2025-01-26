@@ -48,6 +48,8 @@ const importPlantData = async () => {
   router.get("/api/plants/search", async (req, res) => {
     const query = req.query.query?.toLowerCase() || "";
     try {
+      // find all crashed the backend, so regex is used to query the db to find the plants
+      //that include the user typed value in the common_name or scientific_name field
       const plants = await Plant.find({
         $or: [
           { common_name: { $regex: query, $options: "i" } },
@@ -61,6 +63,18 @@ const importPlantData = async () => {
     }
   });
   
+  router.get("/api/plants/:plantId", async (req, res) => {
+    try {
+      const plant = await Plant.findById(req.params.plantId);
+      if (!plant) {
+        return res.status(404).send("Plant not found");
+      }
+      res.json(plant);
+    } catch (error) {
+      console.error("Error fetching plant details:", error);
+      res.status(500).send("Internal server error");
+    }
+  });
 
   // Export Both the Function and Router
   module.exports = {
