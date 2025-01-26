@@ -34,6 +34,34 @@ const importPlantData = async () => {
     }
   });
   
+  router.get("/api/plants/random", async (req, res) => {
+    const limit = parseInt(req.query.limit) || 20;
+    try {
+      const plants = await Plant.aggregate([{ $sample: { size: limit } }]);
+      res.json(plants);
+    } catch (error) {
+      console.error("Error fetching random plants:", error);
+      res.status(500).send("Internal server error");
+    }
+  });
+  
+  router.get("/api/plants/search", async (req, res) => {
+    const query = req.query.query?.toLowerCase() || "";
+    try {
+      const plants = await Plant.find({
+        $or: [
+          { common_name: { $regex: query, $options: "i" } },
+          { scientific_name: { $regex: query, $options: "i" } },
+        ],
+      });
+      res.json(plants);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      res.status(500).send("Internal server error");
+    }
+  });
+  
+
   // Export Both the Function and Router
   module.exports = {
     importPlantData,

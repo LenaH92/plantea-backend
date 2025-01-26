@@ -71,8 +71,11 @@ router.post("/new", isAuthenticated, async (req, res, next) => {
       userId,
       selectedSpecies
     });
-    res.status(201).json(newBlog);
-  } catch (error) {
+    const savedBlog = await newBlog.save();
+    console.log("Blog saved to database:", savedBlog);
+
+    res.status(201).json(savedBlog);
+    } catch (error) {
     next(error);
   }
 });
