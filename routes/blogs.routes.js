@@ -19,10 +19,12 @@ router.get("/:blogId", async (req, res, next) => {
   const { blogId } = req.params;
   if (isValidObjectId(blogId)) {
     try {
-      const blog = await Blog.findById(blogId).populate("userId", "username profilePicture").populate({
-        path: "comments",
-        populate: { path: "userId", select: "username profilePicture" }
-      });  //populating the comments so we can display them
+      const blog = await Blog.findById(blogId)
+        .populate("userId", "username profilePicture")
+        .populate({
+          path: "comments",
+          populate: { path: "userId", select: "username profilePicture" },
+        }); //populating the comments so we can display them
       if (blog) {
         res.status(200).json(blog);
       } else {

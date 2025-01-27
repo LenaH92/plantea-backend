@@ -31,11 +31,40 @@ const router = express.Router();
 /* GEt route to edit your  comment */
 
 // Add a comment
-router.post("/", isAuthenticated, async (req, res, next) => {
+/* router.post("/", isAuthenticated, async (req, res, next) => {
   const { blogPostId, content } = req.body;
   const userId = req.tokenPayload.userId;
   try {
     const newComment = await Comment.create({ blogPostId, userId, content });
+    res.status(201).json(newComment);
+  } catch (error) {
+    next(error);
+  }
+}); */
+/* post a comment
+ */
+router.post("/", isAuthenticated, async (req, res, next) => {
+  const { blogPostId, content } = req.body;
+  const userId = req.tokenPayload.userId;
+
+  // Validationg the blog exists
+  if (!mongoose.isValidObjectId(blogPostId)) {
+    return res.status(400).json({ message: "Invalid blog ID" });
+  }
+
+  try {
+    // finding the blog it'll be bound to
+    const blog = await Blog.findById(blogPostId);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    const newComment = await Comment.create({ blogPostId, userId, content });
+    await newComment.populate("userId", "username profilePicture");
+
+    blog.comments.unshift(newComment._id);// Addding the comment to the array on the blog ddocuemnt
+    await blog.save();
+
     res.status(201).json(newComment);
   } catch (error) {
     next(error);
@@ -54,7 +83,7 @@ router.put("/:commentId", isAuthenticated, async (req, res, next) => {
           const updatedComment = await Comment.findByIdAndUpdate(commentId, req.body, {
             new: true,
             runValidators: true,
-          });
+          }).populate('userId');
           res.json(updatedComment)
         } else {
           res.status(403).json({ message: "you cannot edit a comment you didn't make" })
