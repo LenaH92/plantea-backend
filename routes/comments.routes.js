@@ -83,7 +83,7 @@ router.put("/:commentId", isAuthenticated, async (req, res, next) => {
           const updatedComment = await Comment.findByIdAndUpdate(commentId, req.body, {
             new: true,
             runValidators: true,
-          });
+          }).populate('userId');
           res.json(updatedComment)
         } else {
           res.status(403).json({ message: "you cannot edit a comment you didn't make" })
