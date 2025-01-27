@@ -1,7 +1,7 @@
 const { isValidObjectId } = require("mongoose");
 const User = require("../models/User.model");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
-
+const Blog = require("../models/Blog.model");
 const router = require("express").Router();
 
 router.get("/", async (req, res, next) => {
@@ -53,5 +53,24 @@ router.put("/profile", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+
+/* Get route to All blog */
+// router.get("/profile/blogs", async (req, res, next) => {
+//   const userId = req.tokenPayload.userId;
+//   if (isValidObjectId(userId)) {
+//     try {
+//       const blogs = await Blog.find({ userId });
+//       if (user) {
+//         res.status(200).json(blogs);
+//       } else {
+//         res.status(404).json({ message: "Blogs not found" });
+//       }
+//     } catch (error) {
+//       next(error);
+//     }
+//   } else {
+//     res.status(400).json({ message: "Invalid user ID" });
+//   }
+// });
 
 module.exports = router;
