@@ -18,6 +18,12 @@ app.use('/api', indexRoutes)
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
+const { importPlantData, plantRoutes } = require("./routes/plant.routes");
+app.use(plantRoutes);
+
+// Use the router
+app.use(plantRoutes);
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require('./error-handling')(app)
 

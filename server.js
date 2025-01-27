@@ -3,7 +3,7 @@ const app = require('./app')
 const mongoose = require('mongoose')
 const PORT = process.env.PORT || 5005
 const withDB = require('./db')
-const importPlantData = require('./routes/plant.routes'); // Adjust the path if necessary
+const { importPlantData, plantRoutes } = require("./routes/plant.routes");
 const importPlantDiseaseData = require('./routes/plantdiseases.routes'); // Adjust the path if necessary
 
 // ℹ️ Sets the PORT for our app to have access to it. If no env has been set, we hard code it to 5005

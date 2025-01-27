@@ -62,7 +62,7 @@ router.put("/:blogId", isAuthenticated, async (req, res, next) => {
 });
 
 router.post("/new", isAuthenticated, async (req, res, next) => {
-  const { title, textContent, tags, categories } = req.body;
+  const { title, textContent, tags, categories, selectedSpecies } = req.body;
   const userId = req.tokenPayload.userId;
   try {
     const newBlog = await Blog.create({
@@ -71,9 +71,13 @@ router.post("/new", isAuthenticated, async (req, res, next) => {
       tags,
       categories,
       userId,
+      selectedSpecies
     });
-    res.status(201).json(newBlog);
-  } catch (error) {
+    const savedBlog = await newBlog.save();
+    console.log("Blog saved to database:", savedBlog);
+
+    res.status(201).json(savedBlog);
+    } catch (error) {
     next(error);
   }
 });
