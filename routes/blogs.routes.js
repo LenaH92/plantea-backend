@@ -41,7 +41,7 @@ router.get("/:blogId", async (req, res, next) => {
 /* PUT route to edit one blog */
 router.put("/:blogId", isAuthenticated, async (req, res, next) => {
   const { blogId } = req.params;
-  const { title, textContent, tags, categories } = req.body;
+  const { title, textContent } = req.body;
   if (isValidObjectId(blogId)) {
     try {
       const blogToUpdate = await Blog.findById(blogId);
@@ -49,7 +49,7 @@ router.put("/:blogId", isAuthenticated, async (req, res, next) => {
         if (blogToUpdate.userId.toString() === req.tokenPayload.userId) {
           const updatedBlog = await Blog.findByIdAndUpdate(
             blogId,
-            { title, textContent, tags, categories },
+            { title, textContent },
             { new: true }
           );
           res.status(200).json(updatedBlog);
@@ -71,13 +71,13 @@ router.post("/new", isAuthenticated, async (req, res, next) => {
       tags,
       categories,
       userId,
-      selectedSpecies
+      selectedSpecies,
     });
     const savedBlog = await newBlog.save();
     console.log("Blog saved to database:", savedBlog);
 
     res.status(201).json(savedBlog);
-    } catch (error) {
+  } catch (error) {
     next(error);
   }
 });
