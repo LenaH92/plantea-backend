@@ -38,7 +38,14 @@ router.get("/myblogs", isAuthenticated, async (req, res, next) => {
     try {
       const user = await User.findById(userId)
         .select("-passwordHash")
-        .populate("blogs");
+        .populate({
+          path: "blogs",
+          // a nested populate so that each Blog's userId is also populated
+          populate: {
+            path: "userId",
+            select: "username profilePicture", // choose only the necessary fields
+          },
+        });
       if (user) {
         res.status(200).json(user);
       } else {
@@ -62,11 +69,26 @@ router.get("/mycomments", isAuthenticated, async (req, res, next) => {
         .select("-passwordHash")
         .populate({
           path: "comments",
-          populate: {
-            path: "blogPostId",
-            select: "title textContent mediaContent",
-          },
+          // We can pass an array to "populate" if we want to populate multiple references
+          populate: [
+            {
+              // Populate the Blog document attached to the comment
+              path: "blogPostId",
+              select: "title textContent mediaContent userId",
+              populate: {
+                // Then populate the blog’s author
+                path: "userId",
+                select: "username profilePicture",
+              },
+            },
+            {
+              // Also populate the user who made the comment
+              path: "userId",
+              select: "username profilePicture",
+            },
+          ],
         });
+
       if (user) {
         res.status(200).json(user);
       } else {
