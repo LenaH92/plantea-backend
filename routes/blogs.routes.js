@@ -3,6 +3,8 @@ const Blog = require("../models/Blog.model");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 
 const router = require("express").Router();
+// ********* require fileUploader in order to use it *********
+const fileUploader = require("../config/cloudinary.config");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -61,8 +63,24 @@ router.put("/:blogId", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// POST "/api/blogs/upload" => Route that receives the image, sends it to Cloudinary via the fileUploader and returns the image URL
+router.post("/new/upload", isAuthenticated, fileUploader.single("imageUrl"), (req, res, next) => {
+  // console.log("file is: ", req.file)
+ 
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  
+  // Get the URL of the uploaded file and send it as a response.
+  // 'fileUrl' can be any name, just make sure you remember to use the same when accessing it on the frontend
+  
+  res.json({ fileUrl: req.file.path });
+});
+
+
 router.post("/new", isAuthenticated, async (req, res, next) => {
-  const { title, textContent, tags, categories, selectedSpecies } = req.body;
+  const { title, textContent, tags, categories, selectedSpecies, mediaContent } = req.body;
   const userId = req.tokenPayload.userId;
   try {
     const newBlog = await Blog.create({
@@ -72,6 +90,7 @@ router.post("/new", isAuthenticated, async (req, res, next) => {
       categories,
       userId,
       selectedSpecies,
+      mediaContent
     });
     const savedBlog = await newBlog.save();
     console.log("Blog saved to database:", savedBlog);

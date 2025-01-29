@@ -36,6 +36,9 @@ const blogSchema = new Schema(
     mediaContent: {
       type: [String], //if NOT array of URLS or just one image change
     },
+    other: {
+      type: String, //other plant not in db
+    },
     comments: [
       {
         type: Schema.Types.ObjectId,
