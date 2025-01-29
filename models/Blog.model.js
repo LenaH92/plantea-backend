@@ -46,6 +46,7 @@ const blogSchema = new Schema(
       {
         plantId: { type: Schema.Types.ObjectId, ref: "Plant" },
         name: { type: String },
+        default_image: { type: String }
       },
     ],
   },
