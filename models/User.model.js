@@ -63,6 +63,12 @@ userSchema.virtual("blogs", {
   foreignField: "userId",
 });
 
+userSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "userId",
+});
+
 // Make sure virtuals are included in JSON/objects
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
