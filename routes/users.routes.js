@@ -3,6 +3,7 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middlewares/route-guard.middleware");
 const Blog = require("../models/Blog.model");
 const router = require("express").Router();
+const fileUploader = require("../config/cloudinary.config");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -124,5 +125,40 @@ router.put("/profile", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+
+// / POST "/api/users/uploadProfileImage" => Uploads profile image to Cloudinary
+router.post(
+  "/profilePicture",
+  isAuthenticated,
+  fileUploader.single("imageUrl"), // Ensure frontend sends 'imageUrl'
+  async (req, res, next) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded!" });
+      }
+
+      const userId = req.tokenPayload.userId;
+      const imageUrl = req.file.path; // Cloudinary URL
+
+      // Update user profile with new image URL
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { profilePicture: imageUrl },
+        { new: true, runValidators: true }
+      ).select("-passwordHash");
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json({
+        profileImageUrl: imageUrl,
+        message: "Profile picture updated!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;
