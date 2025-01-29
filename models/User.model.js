@@ -56,6 +56,16 @@ const userSchema = new Schema(
   }
 );
 
+// Virtual field for user’s blogs
+userSchema.virtual("blogs", {
+  ref: "Blog",
+  localField: "_id",
+  foreignField: "userId",
+});
+
+// Make sure virtuals are included in JSON/objects
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
 const User = model("User", userSchema);
 
 module.exports = User;

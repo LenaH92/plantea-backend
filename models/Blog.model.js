@@ -27,6 +27,7 @@ const blogSchema = new Schema(
     type: {
       type: String,
       enum: ["blogPost", "question"],
+      default: "blogPost",
     },
     textContent: {
       type: String,
@@ -34,10 +35,6 @@ const blogSchema = new Schema(
     },
     mediaContent: {
       type: [String], //if NOT array of URLS or just one image change
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
     },
     comments: [
       {
@@ -47,8 +44,8 @@ const blogSchema = new Schema(
     ],
     selectedSpecies: [
       {
-        plantId: { type: Schema.Types.ObjectId, ref: "Plant"},
-        name: { type: String},
+        plantId: { type: Schema.Types.ObjectId, ref: "Plant" },
+        name: { type: String },
       },
     ],
   },

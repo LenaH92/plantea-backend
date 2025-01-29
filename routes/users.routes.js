@@ -14,7 +14,7 @@ router.get("/", async (req, res, next) => {
 }); //we need to get just one user for the profile page
 
 router.get("/profile", isAuthenticated, async (req, res, next) => {
-  const userId = req.tokenPayload.userId; // Get userId from token
+  const userId = req.tokenPayload.userId;
   if (isValidObjectId(userId)) {
     try {
       const user = await User.findById(userId).select("-passwordHash");
@@ -28,6 +28,28 @@ router.get("/profile", isAuthenticated, async (req, res, next) => {
     }
   } else {
     res.status(400).json({ message: "Invalid user ID" });
+  }
+});
+
+// routes/users.js
+router.get("/myblogs", isAuthenticated, async (req, res, next) => {
+  const userId = req.tokenPayload.userId;
+  if (isValidObjectId(userId)) {
+    try {
+      const user = await User.findById(userId)
+        .select("-passwordHash")
+        .populate("blogs");
+      if (user) {
+        console.log("Iser " + user);
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ message: "Blogs not found" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    res.status(400).json({ message: "Invalid user or blogs" });
   }
 });
 
@@ -53,24 +75,5 @@ router.put("/profile", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
-
-/* Get route to All blog */
-// router.get("/profile/blogs", async (req, res, next) => {
-//   const userId = req.tokenPayload.userId;
-//   if (isValidObjectId(userId)) {
-//     try {
-//       const blogs = await Blog.find({ userId });
-//       if (user) {
-//         res.status(200).json(blogs);
-//       } else {
-//         res.status(404).json({ message: "Blogs not found" });
-//       }
-//     } catch (error) {
-//       next(error);
-//     }
-//   } else {
-//     res.status(400).json({ message: "Invalid user ID" });
-//   }
-// });
 
 module.exports = router;
