@@ -3,6 +3,7 @@
 
 ## Description
 A blog and information gathering website about growing plants, how to cure diseases and contribute and learn as you wish
+All the information an regarding the plant and diseases content belongs to [perenual](https://perenual.com/) 
 <br>
 
 ## User stories
