@@ -75,7 +75,7 @@ router.get("/mycomments", isAuthenticated, async (req, res, next) => {
             {
               // Populate the Blog document attached to the comment
               path: "blogPostId",
-              select: "title textContent mediaContent userId",
+              select: "title textContent mediaContent userId createdAt",
               populate: {
                 // Then populate the blog’s author
                 path: "userId",
@@ -87,7 +87,7 @@ router.get("/mycomments", isAuthenticated, async (req, res, next) => {
               path: "userId",
               select: "username profilePicture",
             },
-          ],
+          ]
         });
 
       if (user) {
