@@ -15,4 +15,7 @@ router.use("/users", usersRoutes);
 const { plantRoutes } = require("./plant.routes");
 router.use("/plants", plantRoutes);
 
+const plantDiseasesRoutes = require("./plantdiseases.routes");
+router.use("/plantdiseases", plantDiseasesRoutes);
+
 module.exports = router;
