@@ -31,7 +31,7 @@ All the information regarding the plant and diseases information content belongs
     - email
     - password
     - first name
-    - 
+    - last name
 - POST /auth/login
   - redirects to /profile if user logged in
 
