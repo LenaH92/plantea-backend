@@ -8,7 +8,7 @@ const fileUploader = require("../config/cloudinary.config");
 
 router.get("/", async (req, res, next) => {
   try {
-    const blogs = await Blog.find().populate("userId", "username"); //check if populate without passing hash
+    const blogs = await Blog.find().populate("userId", "username profilePicture"); //check if populate without passing hash
     res.status(200).json(blogs);
   } catch (error) {
     console.log(error);
@@ -66,15 +66,15 @@ router.put("/:blogId", isAuthenticated, async (req, res, next) => {
 // POST "/api/blogs/upload" => Route that receives the image, sends it to Cloudinary via the fileUploader and returns the image URL
 router.post("/new/upload", isAuthenticated, fileUploader.single("imageUrl"), (req, res, next) => {
   // console.log("file is: ", req.file)
- 
+
   if (!req.file) {
     next(new Error("No file uploaded!"));
     return;
   }
-  
+
   // Get the URL of the uploaded file and send it as a response.
   // 'fileUrl' can be any name, just make sure you remember to use the same when accessing it on the frontend
-  
+
   res.json({ fileUrl: req.file.path });
 });
 
